@@ -18,7 +18,6 @@ const WriteArticle = () => {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [content, setContent] = useState('')
-
   const { getToken } = useAuth();
 
   const onSubmitHandler = async (e) => {
@@ -26,26 +25,14 @@ const WriteArticle = () => {
   try {
     setLoading(true)
     const prompt = `Write an article about ${input} in ${selectedLength.text}`
-    const token = await getToken();
-    const { data } = await axios.post(
-      '/api/ai/generate-article', 
-      {
-        prompt,
-        length: selectedLength.length
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+    const { data } = await axios.post('/api/ai/generate-article', {prompt},
+        {headers: {Authorization: `Bearer ${await getToken()}`}}
+      )
+      if (data.success) {
+        setContent(data.content)
+      } else {
+        toast.error(data.message)
       }
-    );
-
-    if(data.success) {
-      setContent(data.content)
-      toast.success('Article generated successfully!')
-    } else {
-      toast.error(data.message || 'Failed to generate article')
-    }
   } catch (error) {
     toast.error(error.response?.data?.message || 'Failed to generate article')
   } finally {
