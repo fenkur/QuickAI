@@ -5,7 +5,6 @@ import axios from "axios";
 import { v2 as cloudinary } from 'cloudinary';
 import FormData from 'form-data';
 import fs from 'fs';
-import pdf from 'pdf-parse/lib/pdf-parse.js';
 
 const AI = new OpenAI({
     apiKey: process.env.GEMINI_API_KEY,
@@ -230,6 +229,7 @@ export const resumeReview = async (req, res) => {
     }
 
     const dataBuffer = fs.readFileSync(resume.path);
+    const pdf = (await import('pdf-parse')).default;
     const pdfData = await pdf(dataBuffer);
 
     const prompt = `Review the following resume and provide constructive feedback
