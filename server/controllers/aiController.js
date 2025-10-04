@@ -5,10 +5,7 @@ import axios from "axios";
 import { v2 as cloudinary } from 'cloudinary';
 import FormData from 'form-data';
 import fs from 'fs';
-import { createRequire } from 'module';
-
-const require = createRequire(import.meta.url);
-const pdf = require('pdf-parse');
+import { pdf } from 'pdf-parse'
 
 const AI = new OpenAI({
     apiKey: process.env.GEMINI_API_KEY,
