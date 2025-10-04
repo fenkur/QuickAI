@@ -5,7 +5,7 @@ import axios from "axios";
 import { v2 as cloudinary } from 'cloudinary';
 import FormData from 'form-data';
 import fs from 'fs';
-import { pdf } from 'pdf-parse'
+import PDFParser from 'pdf2json';
 
 const AI = new OpenAI({
     apiKey: process.env.GEMINI_API_KEY,
@@ -231,11 +231,25 @@ export const resumeReview = async (req, res) => {
 
     const dataBuffer = fs.readFileSync(resume.path);
 
-    const pdfData = await pdf(dataBuffer);
+    // Use pdf2json which works on Vercel
+    const pdfParser = new PDFParser();
+    
+    const pdfText = await new Promise((resolve, reject) => {
+      pdfParser.on("pdfParser_dataReady", () => {
+        const text = pdfParser.getRawTextContent();
+        resolve(text);
+      });
+      
+      pdfParser.on("pdfParser_dataError", (err) => {
+        reject(err);
+      });
+      
+      pdfParser.parseBuffer(dataBuffer);
+    });
 
     const prompt = `Review the following resume and provide constructive feedback
     on its strengths, weaknesses, and areas for improvement. Resume
-    Content:\n\n${pdfData.text}`;
+    Content:\n\n${pdfText}`;
 
     const response = await AI.chat.completions.create({
       model: "gemini-2.0-flash",
