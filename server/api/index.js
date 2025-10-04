@@ -2,9 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import { clerkMiddleware, requireAuth } from '@clerk/express';
-import aiRouter from '../server/routes/aiRoutes.js';
-import connectCloudinary from '../server/configs/cloudinary.js';
-import userRouter from '../server/routes/userRoutes.js';
+import aiRouter from '../routes/aiRoutes.js';
+import connectCloudinary from '../configs/cloudinary.js';
+import userRouter from '../routes/userRoutes.js';
 
 const app = express();
 
